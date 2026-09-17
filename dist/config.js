@@ -37,7 +37,7 @@ export function resolveConfig(config) {
         latchIds: latchIdList.length ? new Set(latchIdList) : null,
         latchNames: asStringMap(config.latchNames),
         namePrefix: typeof config.namePrefix === 'string' ? config.namePrefix : '',
-        autoCloseSeconds: clampInt(config.autoCloseSeconds, 25, 5, 600),
+        autoCloseSeconds: clampInt(config.autoCloseSeconds, 15, 5, 600),
         pollIntervalSeconds: clampInt(config.pollIntervalSeconds, 30, 0, 3600),
         pulseOnClose: Boolean(config.pulseOnClose),
         accessoryType,

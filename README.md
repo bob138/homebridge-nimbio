@@ -39,9 +39,10 @@ sudo npm install -g github:bob138/homebridge-nimbio
 1. After install, Homebridge opens the plugin settings (or go to **Plugins → Nimbio → Settings**).
 2. Paste your Nimbio API key into **Nimbio API Key**.  
    The field is masked so the key stays private in the UI.
-3. Leave **Also pulse when closing** off unless your gate needs a second press to close.
-4. Click **Save**.
-5. **Restart Homebridge** when prompted.
+3. Set **Seconds until HomeKit shows Closed** to match how long your gate stays open before it auto-closes on its own (default **15**).
+4. Leave **Also pulse when closing** off unless your gate needs a second press to close.
+5. Click **Save**.
+6. **Restart Homebridge** when prompted.
 
 That’s the only configuration required. The plugin discovers your gate(s) automatically from the API key.
 
@@ -56,12 +57,28 @@ You can now use Siri (“Open the front gate”) and Home automations like any o
 
 ---
 
+## How open / closed status works
+
+Many gate openers (including yours) **auto-close in hardware** after a short open time. Nimbio’s homeowner API can **open** the gate, but it usually **cannot sense** when the gate has physically closed again.
+
+This plugin handles that as follows:
+
+1. You tap **Open** in Home → Nimbio fires the gate → HomeKit shows **Opening**, then **Open**.
+2. After **Seconds until HomeKit shows Closed** (default 15), HomeKit shows **Closing**, then **Closed** — matching a typical hardware auto-close.
+3. Tune that number in plugin settings if your opener stays open longer or shorter.
+
+If your Nimbio installation uses a **community** API key with a physical sense line, the plugin will prefer that live status instead of the timer.
+
+Camera / HomeKit Secure Video feeds are **not** used for open/closed detection (that would need separate video AI and is out of scope).
+
+---
+
 ## What to expect
 
 - **Open** in Home → Homebridge asks Nimbio to open → the gate moves when the box confirms.
 - Opening over cellular often takes **~15–20 seconds**. Wait for confirmation before trying again.
-- HomeKit may show the gate as Open briefly, then Closed again. That reset is only in the Home app so you can open again; Nimbio’s API is a remote-style pulse, not a full open/close motor status feed for most homeowner setups.
-- If your physical gate needs a second pulse to close, enable **Also pulse when closing** in the plugin settings and save / restart.
+- After a successful open, HomeKit returns to **Closed** on the timer above so status stays usable for the next open.
+- If your physical gate needs a second pulse to close (instead of auto-closing), enable **Also pulse when closing**.
 
 ---
 
@@ -71,6 +88,7 @@ You can now use Siri (“Open the front gate”) and Home automations like any o
 |---|---|
 | Gate never appears | Confirm the API key was saved, restart Homebridge, and check logs for `Nimbio` / `failed to discover`. |
 | Gate appears but doesn’t move | Confirm the key is a **live** key (`nimbio_live_…`) with open permission, and that the same gate opens in the Nimbio app. |
+| HomeKit stays Open too long / too short | Adjust **Seconds until HomeKit shows Closed** to match your opener’s auto-close time, then save and restart. |
 | “Not Responding” in Home | Check Homebridge is online and can reach `https://api.nimbio.com` (internet required — Nimbio is cellular/cloud). |
 | Opens are very slow | Normal for cellular. Keep waiting through the opening state; don’t spam Open. |
 

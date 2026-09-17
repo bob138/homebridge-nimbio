@@ -25,6 +25,14 @@
           "hidden": true
         }
       },
+      "autoCloseSeconds": {
+        "title": "Seconds until HomeKit shows Closed",
+        "type": "integer",
+        "default": 15,
+        "minimum": 5,
+        "maximum": 600,
+        "description": "Most Nimbio homeowner setups cannot report when the gate physically closes. Set this to match your opener’s hardware auto-close (often about 15 seconds) so the Home app returns to Closed on its own."
+      },
       "pulseOnClose": {
         "title": "Also pulse when closing",
         "type": "boolean",
@@ -45,6 +53,7 @@
       "key": "apiKey",
       "type": "password"
     },
+    "autoCloseSeconds",
     "pulseOnClose"
   ]
 }
