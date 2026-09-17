@@ -4,9 +4,11 @@ import { MANUFACTURER, MODEL } from '../settings.js';
 /**
  * HomeKit GarageDoorOpener for a Nimbio latch.
  *
- * Account keys usually have no sense line, so HomeKit state is momentary:
- * Open → API pulse → show Open briefly → auto-close to Closed.
- * Community keys with gate-status can optionally poll real open/closed state.
+ * Typical homeowner (account) keys cannot read physical open/closed state from
+ * Nimbio. After a successful open, HomeKit shows Open, then a timer matching
+ * the gate opener's hardware auto-close marks it Closed again.
+ *
+ * Community keys with sense lines can poll real gate-status instead of the timer.
  */
 export class GateAccessory {
     platform;
@@ -20,6 +22,7 @@ export class GateAccessory {
     obstruction = false;
     busy = false;
     autoCloseTimer = null;
+    closingLeadTimer = null;
     pollTimer = null;
     constructor(platform, accessory, api, config) {
         this.platform = platform;
@@ -53,19 +56,15 @@ export class GateAccessory {
         this.service.updateCharacteristic(Characteristic.CurrentDoorState, this.currentState);
         this.service.updateCharacteristic(Characteristic.TargetDoorState, this.targetState);
         this.service.updateCharacteristic(Characteristic.ObstructionDetected, this.obstruction);
-        if (this.device.hasStatus && this.device.scope === 'community' && this.config.pollIntervalSeconds > 0) {
+        if (this.usesSensedStatus() && this.config.pollIntervalSeconds > 0) {
             this.pollTimer = setInterval(() => {
                 void this.refreshStatus();
             }, this.config.pollIntervalSeconds * 1000);
-            // Unref so it doesn't keep the process alive during tests/shutdown.
             this.pollTimer.unref?.();
         }
     }
     destroy() {
-        if (this.autoCloseTimer) {
-            clearTimeout(this.autoCloseTimer);
-            this.autoCloseTimer = null;
-        }
+        this.clearAutoClose();
         if (this.pollTimer) {
             clearInterval(this.pollTimer);
             this.pollTimer = null;
@@ -76,9 +75,13 @@ export class GateAccessory {
         Object.assign(this.device, device);
         this.obstruction = Boolean(device.offline);
         this.service.updateCharacteristic(this.platform.Characteristic.ObstructionDetected, this.obstruction);
-        if (device.hasStatus) {
+        if (this.usesSensedStatus()) {
             this.applySensedStatus(device.status, device.heldOpen);
         }
+    }
+    /** True when Nimbio can report physical open/closed for this latch. */
+    usesSensedStatus() {
+        return this.device.hasStatus && this.device.scope === 'community';
     }
     async refreshStatus() {
         try {
@@ -132,11 +135,33 @@ export class GateAccessory {
             clearTimeout(this.autoCloseTimer);
             this.autoCloseTimer = null;
         }
+        if (this.closingLeadTimer) {
+            clearTimeout(this.closingLeadTimer);
+            this.closingLeadTimer = null;
+        }
     }
+    /**
+     * Mirror the gate opener's hardware auto-close in HomeKit when Nimbio cannot
+     * sense physical closed state.
+     */
     scheduleAutoClose() {
         this.clearAutoClose();
-        if (this.device.hasStatus) {
+        if (this.usesSensedStatus()) {
             return;
+        }
+        const totalMs = this.config.autoCloseSeconds * 1000;
+        // Show Closing for the last few seconds so HomeKit looks natural.
+        const closingLeadMs = Math.min(3_000, Math.max(0, totalMs - 2_000));
+        this.platform.log.info(`${this.accessory.displayName}: HomeKit will show Closed in ${this.config.autoCloseSeconds}s (matches typical hardware auto-close; Nimbio has no closed sensor for this key)`);
+        if (closingLeadMs > 0) {
+            this.closingLeadTimer = setTimeout(() => {
+                const { Characteristic } = this.platform;
+                this.currentState = Characteristic.CurrentDoorState.CLOSING;
+                this.targetState = Characteristic.TargetDoorState.CLOSED;
+                this.service.updateCharacteristic(Characteristic.CurrentDoorState, this.currentState);
+                this.service.updateCharacteristic(Characteristic.TargetDoorState, this.targetState);
+            }, totalMs - closingLeadMs);
+            this.closingLeadTimer.unref?.();
         }
         this.autoCloseTimer = setTimeout(() => {
             const { Characteristic } = this.platform;
@@ -144,8 +169,8 @@ export class GateAccessory {
             this.targetState = Characteristic.TargetDoorState.CLOSED;
             this.service.updateCharacteristic(Characteristic.CurrentDoorState, this.currentState);
             this.service.updateCharacteristic(Characteristic.TargetDoorState, this.targetState);
-            this.platform.log.debug(`${this.accessory.displayName}: auto-closed in HomeKit after pulse`);
-        }, this.config.autoCloseSeconds * 1000);
+            this.platform.log.info(`${this.accessory.displayName}: HomeKit marked Closed after auto-close timer`);
+        }, totalMs);
         this.autoCloseTimer.unref?.();
     }
     async handleSetTarget(value) {
@@ -158,9 +183,10 @@ export class GateAccessory {
                 await this.pulse('close');
                 return;
             }
+            // Local state only — the physical gate already auto-closes on its own.
             this.currentState = Characteristic.CurrentDoorState.CLOSED;
             this.service.updateCharacteristic(Characteristic.CurrentDoorState, this.currentState);
-            this.platform.log.info(`${this.accessory.displayName}: HomeKit closed (no Nimbio close API; local state only)`);
+            this.platform.log.info(`${this.accessory.displayName}: HomeKit closed (local state; gate auto-closes in hardware)`);
             return;
         }
         if (target !== Characteristic.TargetDoorState.OPEN) {
@@ -171,6 +197,7 @@ export class GateAccessory {
             await this.pulse('open');
         }
         catch (error) {
+            this.clearAutoClose();
             this.targetState = Characteristic.TargetDoorState.CLOSED;
             this.currentState = Characteristic.CurrentDoorState.CLOSED;
             this.service.updateCharacteristic(Characteristic.TargetDoorState, this.targetState);

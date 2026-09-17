@@ -80,10 +80,12 @@ export class NimbioPlatform implements DynamicPlatformPlugin {
       const result = await discoverLatches(this.nimbio);
       discovered = filterLatches(result.latches, this.resolved.latchIds);
       this.log.info(
-        `Nimbio key scope=${result.scope} mode=${result.mode ?? 'unknown'}; found ${result.latches.length} latch(es), exposing ${discovered.length}`,
+        `Connected to Nimbio (${result.scope}); found ${result.latches.length} gate(s), exposing ${discovered.length}`,
       );
       if (result.mode === 'test') {
-        this.log.warn('Using a nimbio_test_… key — opens are simulated and will not fire the gate.');
+        this.log.error(
+          'This API key is a test key (nimbio_test_…). It will not open your gate. Create a live key (nimbio_live_…) in the Nimbio portal and update the plugin settings.',
+        );
       }
     } catch (error) {
       this.log.error('Failed to discover Nimbio latches:', error);

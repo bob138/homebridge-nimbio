@@ -1,106 +1,108 @@
 # homebridge-nimbio
 
-Homebridge plugin that exposes **Nimbio** cellular smart gate openers in Apple HomeKit.
+Control your **Nimbio** cellular smart gate from Apple HomeKit using Homebridge.
 
-It talks to the official [Nimbio Public API](https://api.nimbio.com/) using `@nimbio/community-api`, discovers latches on your API key, and publishes each one as a HomeKit **Garage Door Opener** (or optional momentary **Switch**).
+---
 
-## How it works
+## Setup guide
 
-| API key type | Discovery | Open | Physical status |
-|---|---|---|---|
-| **Account** (`type: account`) — typical homeowner | `GET /v1/account/keys` | `POST /v1/account/keys/{key}/latches/{latch}/open` | Not available — HomeKit uses a momentary open, then auto-closes after `autoCloseSeconds` |
-| **Community** (`type: community`) — community manager | `GET /v1/community/gate-status` | `POST /v1/community/latches/{latch}/open` | Polled when sense lines are configured |
+Follow these steps once. When you’re done, your gate shows up in the Home app like any other garage door / gate.
 
-Nimbio opens are **synchronous** over cellular and often take ~15–18 seconds for the box to confirm. The plugin waits for that confirmation before marking the gate Open in HomeKit.
+### 1. Create a Nimbio API key
 
-## Prerequisites
+1. Sign in to the [Nimbio portal](https://nimbio.com/) (the same account that already opens your gate in the Nimbio app).
+2. Open **API keys** / developer settings for your account.
+3. Create a **live** API key with permission to **open** your gate.
+4. Copy the key when it’s shown — it looks like `nimbio_live_…` and is only displayed once.
 
-1. A Nimbio gate / latch on your account (or community).
-2. An API key from the Nimbio portal:
-   - Prefer an **account** key with the `open` capability for a personal gate.
-   - Start with a `nimbio_test_…` key while wiring Homebridge (opens are simulated).
-   - Switch to `nimbio_live_…` when you want real opens.
-3. Homebridge **1.8+** (or 2.x) on Node **18+**.
+Use a **live** key. That key is what actually opens the gate.
 
-## Install
+### 2. Install the plugin in Homebridge
 
-### Homebridge UI
+**Homebridge UI (recommended)**
 
-1. Plugins → search / install from GitHub: `bob138/homebridge-nimbio`  
-   (or install after publishing to npm as `homebridge-nimbio`).
-2. Configure the platform (see below).
-3. Restart Homebridge.
+1. Open the Homebridge UI in your browser.
+2. Go to **Plugins**.
+3. Search for `homebridge-nimbio`, or install from GitHub: `bob138/homebridge-nimbio`.
+4. Click **Install** and wait until it finishes.
 
-### CLI
+**Command line (optional)**
 
 ```bash
-# From npm (once published)
 sudo npm install -g homebridge-nimbio
-
-# Or directly from this repo
+# or, from this repo:
 sudo npm install -g github:bob138/homebridge-nimbio
 ```
 
-## Configuration
+### 3. Enter your API key in the Homebridge UI
 
-Example `config.json` platform block:
+1. After install, Homebridge opens the plugin settings (or go to **Plugins → Nimbio → Settings**).
+2. Paste your Nimbio API key into **Nimbio API Key**.  
+   The field is masked so the key stays private in the UI.
+3. Set **Seconds until HomeKit shows Closed** to match how long your gate stays open before it auto-closes on its own (default **15**).
+4. Leave **Also pulse when closing** off unless your gate needs a second press to close.
+5. Click **Save**.
+6. **Restart Homebridge** when prompted.
 
-```json
-{
-  "platforms": [
-    {
-      "platform": "Nimbio",
-      "name": "Nimbio",
-      "apiKey": "nimbio_live_YOUR_KEY_HERE",
-      "accessoryType": "garageDoor",
-      "autoCloseSeconds": 25,
-      "pulseOnClose": false,
-      "openNote": "HomeKit"
-    }
-  ]
-}
-```
+That’s the only configuration required. The plugin discovers your gate(s) automatically from the API key.
 
-### Options
+### 4. Add the gate in Apple Home
 
-| Field | Required | Default | Description |
-|---|---|---|---|
-| `apiKey` | yes | — | Nimbio bearer key (`nimbio_live_…` / `nimbio_test_…`) |
-| `accessoryType` | no | `garageDoor` | `garageDoor` or `switch` |
-| `latchIds` | no | all | Only expose these latch IDs |
-| `latchNames` | no | — | Map of latch ID → HomeKit name |
-| `namePrefix` | no | `""` | Prefix for discovered names |
-| `autoCloseSeconds` | no | `25` | Momentary HomeKit “Open” duration when no sense line |
-| `pollIntervalSeconds` | no | `30` | Community gate-status poll interval (`0` = off) |
-| `pulseOnClose` | no | `false` | Also fire Nimbio open when HomeKit asks to close (toggle operators) |
-| `openNote` | no | `HomeKit` | Note stored on Nimbio access logs |
-| `timeoutSeconds` | no | `45` | HTTP timeout for open calls |
-| `baseUrl` | no | production | Override API base URL |
+1. Open the **Home** app on your iPhone or iPad.
+2. Find the new garage door / gate accessory (named from Nimbio, e.g. “Front Gate”).
+3. Tap it to open. The first open can take about 15–20 seconds while Nimbio reaches the cellular box.
+4. Rename it in Home if you want (“Front Gate”, “Driveway”, etc.).
 
-## HomeKit behavior
+You can now use Siri (“Open the front gate”) and Home automations like any other HomeKit door.
 
-- **Open** in the Home app → Nimbio latch open → shows Opening, then Open when the box confirms.
-- Without a sense line, the accessory returns to **Closed** after `autoCloseSeconds` so you can open again. This is display-only; it does not send a close command (Nimbio’s public open API is a pulse/open, not a bidirectional door motor API).
-- Enable **Pulse on Close** if your gate operator needs a second pulse to close.
-- Offline latches report **Obstruction Detected**.
+---
 
-## Siri / automations
+## How open / closed status works
 
-Once the accessory appears in the Home app you can say “Open the front gate” or add it to automations / scenes like any other garage door.
+Many gate openers (including yours) **auto-close in hardware** after a short open time. Nimbio’s homeowner API can **open** the gate, but it usually **cannot sense** when the gate has physically closed again.
 
-## Development
+This plugin handles that as follows:
 
-```bash
-npm install
-npm test
-npm run build
-```
+1. You tap **Open** in Home → Nimbio fires the gate → HomeKit shows **Opening**, then **Open**.
+2. After **Seconds until HomeKit shows Closed** (default 15), HomeKit shows **Closing**, then **Closed** — matching a typical hardware auto-close.
+3. Tune that number in plugin settings if your opener stays open longer or shorter.
 
-## Security notes
+If your Nimbio installation uses a **community** API key with a physical sense line, the plugin will prefer that live status instead of the timer.
 
-- Treat the API key like a physical remote. Prefer a least-privilege key with only `open`.
-- Keep Homebridge on your LAN; do not commit live keys to git.
-- Test keys never fire hardware — useful for verifying discovery before going live.
+Camera / HomeKit Secure Video feeds are **not** used for open/closed detection (that would need separate video AI and is out of scope).
+
+---
+
+## What to expect
+
+- **Open** in Home → Homebridge asks Nimbio to open → the gate moves when the box confirms.
+- Opening over cellular often takes **~15–20 seconds**. Wait for confirmation before trying again.
+- After a successful open, HomeKit returns to **Closed** on the timer above so status stays usable for the next open.
+- If your physical gate needs a second pulse to close (instead of auto-closing), enable **Also pulse when closing**.
+
+---
+
+## Troubleshooting
+
+| Problem | What to try |
+|---|---|
+| Gate never appears | Confirm the API key was saved, restart Homebridge, and check logs for `Nimbio` / `failed to discover`. |
+| Gate appears but doesn’t move | Confirm the key is a **live** key (`nimbio_live_…`) with open permission, and that the same gate opens in the Nimbio app. |
+| HomeKit stays Open too long / too short | Adjust **Seconds until HomeKit shows Closed** to match your opener’s auto-close time, then save and restart. |
+| “Not Responding” in Home | Check Homebridge is online and can reach `https://api.nimbio.com` (internet required — Nimbio is cellular/cloud). |
+| Opens are very slow | Normal for cellular. Keep waiting through the opening state; don’t spam Open. |
+
+Check Homebridge logs (**Status → Logs**) for lines mentioning `Nimbio` if something still fails.
+
+---
+
+## Security
+
+- Treat the API key like a physical remote — anyone with it can open your gate.
+- Enter it only in the Homebridge UI (or your private `config.json` on the Homebridge server). Never commit it to git or share it.
+- Prefer a key scoped only to opening your gate.
+
+---
 
 ## License
 

@@ -1,7 +1,7 @@
 export type AccessoryKind = 'garageDoor' | 'switch';
 export interface NimbioPlatformConfig {
     name?: string;
-    /** Nimbio API key (`nimbio_live_…` or `nimbio_test_…`). Account or community scoped. */
+    /** Nimbio live API key (`nimbio_live_…`). Account or community scoped. */
     apiKey?: string;
     /** Optional override for the API base URL (defaults to production). */
     baseUrl?: string;
@@ -12,8 +12,9 @@ export interface NimbioPlatformConfig {
     /** Prefix applied to discovered latch names. */
     namePrefix?: string;
     /**
-     * How long (seconds) a momentary gate stays "Open" in HomeKit after a
-     * successful open when no physical sense line is available. Default 25.
+     * How long (seconds) HomeKit keeps the gate shown as Open after a successful
+     * open when Nimbio cannot report physical closed state. Match this to your
+     * gate opener's hardware auto-close. Default 15.
      */
     autoCloseSeconds?: number;
     /**
