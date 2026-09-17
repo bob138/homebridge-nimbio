@@ -2,7 +2,7 @@ export type AccessoryKind = 'garageDoor' | 'switch';
 
 export interface NimbioPlatformConfig {
   name?: string;
-  /** Nimbio API key (`nimbio_live_…` or `nimbio_test_…`). Account or community scoped. */
+  /** Nimbio live API key (`nimbio_live_…`). Account or community scoped. */
   apiKey?: string;
   /** Optional override for the API base URL (defaults to production). */
   baseUrl?: string;
@@ -85,7 +85,7 @@ function clampInt(value: unknown, fallback: number, min: number, max: number): n
 export function resolveConfig(config: NimbioPlatformConfig): ResolvedConfig {
   const apiKey = typeof config.apiKey === 'string' ? config.apiKey.trim() : '';
   if (!apiKey) {
-    throw new Error('Nimbio platform requires an "apiKey" (create one in the Nimbio portal).');
+    throw new Error('Enter your Nimbio API key in the Homebridge plugin settings.');
   }
 
   const accessoryType = config.accessoryType === 'switch' ? 'switch' : 'garageDoor';

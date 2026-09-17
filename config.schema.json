@@ -3,8 +3,8 @@
   "pluginType": "platform",
   "singular": true,
   "strictValidation": false,
-  "headerDisplay": "Connect Nimbio cellular smart gates to Apple HomeKit. Create an API key in the Nimbio portal (account key for personal gates, community key for managed communities).",
-  "footerDisplay": "Use a `nimbio_test_…` key while verifying setup (opens are simulated). Switch to `nimbio_live_…` for real gate control.",
+  "headerDisplay": "Control your Nimbio cellular gate from Apple HomeKit. Paste a live API key from the Nimbio portal below — Homebridge stores it securely in your config.",
+  "footerDisplay": "After saving, restart Homebridge. Your gate will appear in the Apple Home app.",
   "schema": {
     "type": "object",
     "required": ["name", "apiKey"],
@@ -14,88 +14,37 @@
         "title": "Name",
         "type": "string",
         "default": "Nimbio",
-        "description": "Platform name shown in Homebridge logs."
+        "description": "Label for this plugin in Homebridge logs."
       },
       "apiKey": {
         "title": "Nimbio API Key",
         "type": "string",
-        "description": "Bearer API key from the Nimbio portal (`nimbio_live_…` or `nimbio_test_…`). Account keys open your latches; community keys can also poll gate status.",
+        "description": "Live API key from the Nimbio portal (starts with nimbio_live_). This is the only secret you need.",
+        "placeholder": "nimbio_live_…",
         "options": {
           "hidden": true
         }
       },
-      "accessoryType": {
-        "title": "Accessory Type",
-        "type": "string",
-        "default": "garageDoor",
-        "oneOf": [
-          { "title": "Garage Door / Gate", "enum": ["garageDoor"] },
-          { "title": "Momentary Switch", "enum": ["switch"] }
-        ],
-        "description": "Garage Door is the usual HomeKit control for gates. Switch fires open when turned On, then flips back Off."
-      },
-      "latchIds": {
-        "title": "Latch IDs",
-        "type": "array",
-        "description": "Optional. Only expose these latch IDs. Leave empty to expose every latch on the key.",
-        "items": {
-          "type": "string"
-        }
-      },
-      "latchNames": {
-        "title": "Latch Name Overrides",
-        "type": "object",
-        "description": "Optional map of latch ID → HomeKit display name.",
-        "additionalProperties": {
-          "type": "string"
-        }
-      },
-      "namePrefix": {
-        "title": "Name Prefix",
-        "type": "string",
-        "description": "Optional prefix added to each discovered latch name."
-      },
-      "autoCloseSeconds": {
-        "title": "Auto-Close Seconds",
-        "type": "integer",
-        "default": 25,
-        "minimum": 5,
-        "maximum": 600,
-        "description": "When no sense line is available, how long HomeKit keeps the gate shown as Open after a successful pulse before returning to Closed."
-      },
-      "pollIntervalSeconds": {
-        "title": "Status Poll Interval (seconds)",
-        "type": "integer",
-        "default": 30,
-        "minimum": 0,
-        "maximum": 3600,
-        "description": "Community keys only. How often to poll gate-status. Set 0 to disable."
-      },
       "pulseOnClose": {
-        "title": "Pulse on Close",
+        "title": "Also pulse when closing",
         "type": "boolean",
         "default": false,
-        "description": "If enabled, asking HomeKit to close also sends a Nimbio open (for operators that toggle on each pulse)."
-      },
-      "openNote": {
-        "title": "Open Note",
-        "type": "string",
-        "default": "HomeKit",
-        "description": "Optional note stored with each open in Nimbio access logs."
-      },
-      "timeoutSeconds": {
-        "title": "API Timeout (seconds)",
-        "type": "integer",
-        "default": 45,
-        "minimum": 15,
-        "maximum": 120,
-        "description": "Nimbio open calls wait for the cellular box to confirm (~15–18s). Keep this above that."
-      },
-      "baseUrl": {
-        "title": "API Base URL",
-        "type": "string",
-        "description": "Optional override. Leave blank for production (https://api.nimbio.com)."
+        "description": "Turn this on if your gate needs a second remote press to close. Most users can leave this off."
       }
     }
-  }
+  },
+  "layout": [
+    {
+      "type": "flex",
+      "flex-flow": "row wrap",
+      "items": [
+        "name"
+      ]
+    },
+    {
+      "key": "apiKey",
+      "type": "password"
+    },
+    "pulseOnClose"
+  ]
 }

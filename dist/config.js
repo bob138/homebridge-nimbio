@@ -26,7 +26,7 @@ function clampInt(value, fallback, min, max) {
 export function resolveConfig(config) {
     const apiKey = typeof config.apiKey === 'string' ? config.apiKey.trim() : '';
     if (!apiKey) {
-        throw new Error('Nimbio platform requires an "apiKey" (create one in the Nimbio portal).');
+        throw new Error('Enter your Nimbio API key in the Homebridge plugin settings.');
     }
     const accessoryType = config.accessoryType === 'switch' ? 'switch' : 'garageDoor';
     const latchIdList = asStringArray(config.latchIds);

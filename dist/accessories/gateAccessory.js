@@ -57,7 +57,6 @@ export class GateAccessory {
             this.pollTimer = setInterval(() => {
                 void this.refreshStatus();
             }, this.config.pollIntervalSeconds * 1000);
-            // Unref so it doesn't keep the process alive during tests/shutdown.
             this.pollTimer.unref?.();
         }
     }
