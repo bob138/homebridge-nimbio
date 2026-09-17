@@ -11,4 +11,3 @@ nodemon.json
 *.tgz
 .env
 .env.*
-dist/test/
