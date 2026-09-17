@@ -1,0 +1,10 @@
+{
+  "watch": ["dist"],
+  "ext": "js",
+  "ignore": [],
+  "exec": "hb-service debug",
+  "signal": "SIGTERM",
+  "env": {
+    "NODE_OPTIONS": "--trace-warnings"
+  }
+}

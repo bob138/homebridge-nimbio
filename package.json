@@ -1,0 +1,58 @@
+{
+  "name": "homebridge-nimbio",
+  "displayName": "Nimbio",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Homebridge plugin for Nimbio cellular smart gate openers",
+  "author": "bob138",
+  "license": "Apache-2.0",
+  "homepage": "https://github.com/bob138/homebridge-nimbio#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bob138/homebridge-nimbio.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bob138/homebridge-nimbio/issues"
+  },
+  "keywords": [
+    "homebridge-plugin",
+    "supports-hap",
+    "nimbio",
+    "gate",
+    "garage-door",
+    "homekit"
+  ],
+  "main": "dist/index.js",
+  "files": [
+    "LICENSE",
+    "README.md",
+    "config.schema.json",
+    "dist"
+  ],
+  "engines": {
+    "node": "^18.20.0 || ^20.0.0 || ^22.0.0 || ^24.0.0",
+    "homebridge": "^1.8.0 || ^2.0.0"
+  },
+  "scripts": {
+    "build": "rimraf ./dist && tsc",
+    "lint": "eslint . --max-warnings=0",
+    "test": "npm run build && node --import tsx --test test/*.test.ts",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm run lint && npm run build",
+    "watch": "npm run build && npm link --foreground-scripts && nodemon"
+  },
+  "dependencies": {
+    "@nimbio/community-api": "^0.7.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.0",
+    "@types/node": "^22.15.0",
+    "eslint": "^9.39.0",
+    "homebridge": "^1.11.0",
+    "nodemon": "^3.1.10",
+    "rimraf": "^6.0.1",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.32.0"
+  }
+}

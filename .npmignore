@@ -1,0 +1,14 @@
+src/
+test/
+tsconfig.json
+eslint.config.js
+nodemon.json
+*.tsbuildinfo
+.git/
+.github/
+.vscode/
+.idea/
+*.tgz
+.env
+.env.*
+dist/test/
