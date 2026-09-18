@@ -2,7 +2,7 @@
   "name": "homebridge-nimbio",
   "displayName": "Nimbio",
   "type": "module",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Homebridge plugin for Nimbio cellular smart gate openers",
   "author": "homebridge-nimbio contributors",
   "license": "Apache-2.0",
