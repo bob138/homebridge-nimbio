@@ -1,3 +1,4 @@
+import { createRequire } from 'node:module';
 /**
  * Platform name used in Homebridge config.json.
  */
@@ -8,4 +9,6 @@ export const PLATFORM_NAME = 'Nimbio';
 export const PLUGIN_NAME = 'homebridge-nimbio';
 export const MANUFACTURER = 'Nimbio';
 export const MODEL = 'Cellular Gate Opener';
+const require = createRequire(import.meta.url);
+export const PLUGIN_VERSION = require('../package.json').version;
 //# sourceMappingURL=settings.js.map

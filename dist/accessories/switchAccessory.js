@@ -1,5 +1,5 @@
 import { openLatch } from '../nimbio/api.js';
-import { MANUFACTURER, MODEL } from '../settings.js';
+import { MANUFACTURER, MODEL, PLUGIN_VERSION } from '../settings.js';
 /**
  * Momentary switch: turning On fires a Nimbio open, then returns to Off.
  */
@@ -24,7 +24,7 @@ export class SwitchAccessory {
             .setCharacteristic(Characteristic.Manufacturer, MANUFACTURER)
             .setCharacteristic(Characteristic.Model, MODEL)
             .setCharacteristic(Characteristic.SerialNumber, this.device.latchId)
-            .setCharacteristic(Characteristic.FirmwareRevision, '1.0.0');
+            .setCharacteristic(Characteristic.FirmwareRevision, PLUGIN_VERSION);
         this.service = this.accessory.getService(this.platform.Service.Switch)
             || this.accessory.addService(this.platform.Service.Switch);
         this.service.setCharacteristic(Characteristic.Name, this.accessory.displayName);

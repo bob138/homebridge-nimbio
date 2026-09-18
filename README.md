@@ -2,10 +2,12 @@
 
 Homebridge plugin that exposes **Nimbio** cellular smart gate openers in Apple HomeKit.
 
+This plugin follows the [Homebridge Verified Plugins](https://github.com/homebridge/plugins/wiki/Verified-Plugins) guidelines (dynamic platform, Plugin Settings GUI, no analytics, and related requirements). Verification status in the Homebridge UI is granted by the Homebridge team after review.
+
 ## Requirements
 
 - [Homebridge](https://homebridge.io/) v1.8+ (or v2)
-- Node.js 18, 20, 22, or 24
+- Node.js **22** or **24** (current Homebridge-supported LTS versions)
 - A Nimbio account with a **live** API key that can open your gate
 - Network access from the Homebridge host to `https://api.nimbio.com`
 
@@ -16,6 +18,8 @@ Homebridge plugin that exposes **Nimbio** cellular smart gate openers in Apple H
 1. Open the Homebridge UI → **Plugins**.
 2. Search for `homebridge-nimbio`.
 3. Click **Install**, then open **Settings**.
+
+The plugin does not start until you add and save a platform configuration (at minimum a live API key).
 
 ### Command line
 
@@ -53,7 +57,7 @@ Use a **live** key. Test keys (`nimbio_test_…`) will not open the gate.
 4. Leave **Also pulse when closing** off unless the gate needs a second press to close.
 5. Click **Save** and restart Homebridge when prompted.
 
-No latch IDs are required for the common case — the plugin discovers gate(s) from the API key.
+No latch IDs are required for the common case — the plugin discovers gate(s) from the API key. Optional advanced settings (accessory type, latch filters, timeouts, and related options) are available under **Advanced** in the plugin settings UI.
 
 ### Example `config.json` (advanced)
 
@@ -118,10 +122,13 @@ Check Homebridge logs (**Status → Logs**) for lines mentioning `Nimbio` if som
 - Treat the API key like a physical remote — anyone with it can open the gate.
 - Enter it only in the Homebridge UI (or a private `config.json` on the Homebridge server). Never commit it to git or share it.
 - Prefer a key scoped only to opening the intended gate.
+- This plugin does not include analytics or user tracking.
 
 ## Support
 
 Bug reports and feature requests: [GitHub Issues](https://github.com/bob138/homebridge-nimbio/issues).
+
+See [CHANGELOG.md](CHANGELOG.md) for release notes.
 
 ## License
 

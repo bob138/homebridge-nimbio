@@ -4,7 +4,7 @@
   "singular": true,
   "strictValidation": false,
   "headerDisplay": "Control a Nimbio cellular gate from Apple HomeKit. Paste a live API key from the Nimbio portal — Homebridge stores it in the local config.",
-  "footerDisplay": "After saving, restart Homebridge. Discovered gates appear in the Apple Home app.",
+  "footerDisplay": "After saving, restart Homebridge. Discovered gates appear in the Apple Home app. Advanced options are optional.",
   "schema": {
     "type": "object",
     "required": ["name", "apiKey"],
@@ -38,6 +38,71 @@
         "type": "boolean",
         "default": false,
         "description": "Turn this on if your gate needs a second remote press to close. Most users can leave this off."
+      },
+      "accessoryType": {
+        "title": "HomeKit accessory type",
+        "type": "string",
+        "default": "garageDoor",
+        "oneOf": [
+          {
+            "title": "Garage Door Opener (recommended)",
+            "enum": ["garageDoor"]
+          },
+          {
+            "title": "Momentary Switch",
+            "enum": ["switch"]
+          }
+        ],
+        "description": "Garage Door Opener is the usual control. Switch fires open when turned On, then returns to Off."
+      },
+      "latchIds": {
+        "title": "Latch IDs to expose",
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Optional. Leave empty to expose every latch available to the API key. Otherwise only the listed latch IDs appear in Home."
+      },
+      "namePrefix": {
+        "title": "Name prefix",
+        "type": "string",
+        "default": "",
+        "description": "Optional prefix prepended to discovered latch names."
+      },
+      "latchNames": {
+        "title": "Latch display names",
+        "type": "object",
+        "additionalProperties": {
+          "type": "string"
+        },
+        "description": "Optional map of latch ID to HomeKit display name. Usually easier to rename in the Home app."
+      },
+      "openNote": {
+        "title": "Open note",
+        "type": "string",
+        "default": "HomeKit",
+        "description": "Note stored with each Nimbio open request."
+      },
+      "pollIntervalSeconds": {
+        "title": "Status poll interval (seconds)",
+        "type": "integer",
+        "default": 30,
+        "minimum": 0,
+        "maximum": 3600,
+        "description": "Community keys with a sense line only. How often to poll gate-status. Set to 0 to disable polling."
+      },
+      "timeoutSeconds": {
+        "title": "API timeout (seconds)",
+        "type": "integer",
+        "default": 45,
+        "minimum": 15,
+        "maximum": 120,
+        "description": "How long to wait for Nimbio open confirmation (cellular opens often take 15–20 seconds)."
+      },
+      "baseUrl": {
+        "title": "API base URL",
+        "type": "string",
+        "description": "Optional override. Leave blank to use the production Nimbio API."
       }
     }
   },
@@ -54,6 +119,22 @@
       "type": "password"
     },
     "autoCloseSeconds",
-    "pulseOnClose"
+    "pulseOnClose",
+    {
+      "type": "fieldset",
+      "title": "Advanced",
+      "expandable": true,
+      "expanded": false,
+      "items": [
+        "accessoryType",
+        "latchIds",
+        "namePrefix",
+        "latchNames",
+        "openNote",
+        "pollIntervalSeconds",
+        "timeoutSeconds",
+        "baseUrl"
+      ]
+    }
   ]
 }

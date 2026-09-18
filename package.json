@@ -2,14 +2,14 @@
   "name": "homebridge-nimbio",
   "displayName": "Nimbio",
   "type": "module",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "Homebridge plugin for Nimbio cellular smart gate openers",
   "author": "homebridge-nimbio contributors",
   "license": "Apache-2.0",
   "homepage": "https://github.com/bob138/homebridge-nimbio#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/bob138/homebridge-nimbio.git"
+    "url": "https://github.com/bob138/homebridge-nimbio.git"
   },
   "bugs": {
     "url": "https://github.com/bob138/homebridge-nimbio/issues"
@@ -26,17 +26,17 @@
   "files": [
     "LICENSE",
     "README.md",
+    "CHANGELOG.md",
     "config.schema.json",
     "dist"
   ],
   "engines": {
-    "node": "^18.20.0 || ^20.0.0 || ^22.0.0 || ^24.0.0",
+    "node": "^22.10.0 || ^24.0.0",
     "homebridge": "^1.8.0 || ^2.0.0"
   },
   "scripts": {
     "build": "rimraf ./dist && tsc",
     "lint": "eslint . --max-warnings=0",
-    "prepare": "npm run build",
     "prepublishOnly": "npm run lint && npm run build",
     "watch": "npm run build && npm link --foreground-scripts && nodemon"
   },

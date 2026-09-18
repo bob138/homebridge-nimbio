@@ -8,3 +8,4 @@ export declare const PLATFORM_NAME = "Nimbio";
 export declare const PLUGIN_NAME = "homebridge-nimbio";
 export declare const MANUFACTURER = "Nimbio";
 export declare const MODEL = "Cellular Gate Opener";
+export declare const PLUGIN_VERSION: string;

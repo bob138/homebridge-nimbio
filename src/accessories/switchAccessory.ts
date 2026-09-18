@@ -3,7 +3,7 @@ import type { CharacteristicValue, PlatformAccessory, Service } from 'homebridge
 import type { ResolvedConfig } from '../config.js';
 import { openLatch, type NimbioApi } from '../nimbio/api.js';
 import type { DiscoveredLatch } from '../nimbio/types.js';
-import { MANUFACTURER, MODEL } from '../settings.js';
+import { MANUFACTURER, MODEL, PLUGIN_VERSION } from '../settings.js';
 import type { NimbioPlatform } from '../platform.js';
 
 export interface SwitchAccessoryContext {
@@ -33,7 +33,7 @@ export class SwitchAccessory {
       .setCharacteristic(Characteristic.Manufacturer, MANUFACTURER)
       .setCharacteristic(Characteristic.Model, MODEL)
       .setCharacteristic(Characteristic.SerialNumber, this.device.latchId)
-      .setCharacteristic(Characteristic.FirmwareRevision, '1.0.0');
+      .setCharacteristic(Characteristic.FirmwareRevision, PLUGIN_VERSION);
 
     this.service = this.accessory.getService(this.platform.Service.Switch)
       || this.accessory.addService(this.platform.Service.Switch);

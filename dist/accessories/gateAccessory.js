@@ -1,6 +1,6 @@
 import { openLatch } from '../nimbio/api.js';
 import { classifyGateStatus } from '../nimbio/types.js';
-import { MANUFACTURER, MODEL } from '../settings.js';
+import { MANUFACTURER, MODEL, PLUGIN_VERSION } from '../settings.js';
 /**
  * HomeKit GarageDoorOpener for a Nimbio latch.
  *
@@ -42,7 +42,7 @@ export class GateAccessory {
             .setCharacteristic(Characteristic.Manufacturer, MANUFACTURER)
             .setCharacteristic(Characteristic.Model, MODEL)
             .setCharacteristic(Characteristic.SerialNumber, this.device.latchId)
-            .setCharacteristic(Characteristic.FirmwareRevision, '1.0.0');
+            .setCharacteristic(Characteristic.FirmwareRevision, PLUGIN_VERSION);
         this.service = this.accessory.getService(this.platform.Service.GarageDoorOpener)
             || this.accessory.addService(this.platform.Service.GarageDoorOpener);
         this.service.setCharacteristic(Characteristic.Name, this.accessory.displayName);
