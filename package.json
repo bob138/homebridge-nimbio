@@ -9,7 +9,7 @@
   "homepage": "https://github.com/bob138/homebridge-nimbio#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/bob138/homebridge-nimbio.git"
+    "url": "git+https://github.com/bob138/homebridge-nimbio.git"
   },
   "bugs": {
     "url": "https://github.com/bob138/homebridge-nimbio/issues"

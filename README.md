@@ -19,26 +19,31 @@ Use a **live** key. That key is what actually opens the gate.
 
 ### 2. Install the plugin in Homebridge
 
-This plugin is on GitHub today (not yet listed in the Homebridge plugin search, which only shows packages published to npm).
+**Homebridge UI (recommended)**
 
-**Install from GitHub (recommended right now)**
+1. Open the Homebridge UI → **Plugins**.
+2. Search for **homebridge-nimbio** (or **Nimbio**).
+3. Click **Install**, then open **Settings** when install finishes.
 
-1. Open the Homebridge UI → **…** / terminal (or SSH into the Homebridge host).
-2. Run **one** of these, depending on how Homebridge is installed:
+If the plugin does not appear in search yet (new packages can take a short while to show up), install by package name:
+
+1. Homebridge UI → **Plugins** → search box → enter exactly `homebridge-nimbio` → **Install**.
+2. Or from the Homebridge host:
 
 ```bash
 # Most Raspberry Pi / apt / hb-service installs:
 cd /var/lib/homebridge
-npm install github:bob138/homebridge-nimbio
+npm install homebridge-nimbio
 
 # Global npm installs:
-sudo npm install -g github:bob138/homebridge-nimbio
+sudo npm install -g homebridge-nimbio
 ```
 
 3. Restart Homebridge from the UI.
 4. Go to **Plugins** — you should see **Nimbio**. Open its **Settings**.
 
 If `npm install` complains about permissions, use the same user/path your other plugins use (often the `homebridge` user under `/var/lib/homebridge`).
+
 ### 3. Enter your API key in the Homebridge UI
 
 1. After install, Homebridge opens the plugin settings (or go to **Plugins → Nimbio → Settings**).
