@@ -2,7 +2,7 @@
 
 Homebridge plugin that exposes **Nimbio** cellular smart gate openers in Apple HomeKit.
 
-This plugin follows the [Homebridge Verified Plugins](https://github.com/homebridge/plugins/wiki/Verified-Plugins) guidelines (dynamic platform, Plugin Settings GUI, no analytics, and related requirements). Verification status in the Homebridge UI is granted by the Homebridge team after review.
+This plugin follows the [Homebridge Verified Plugins](https://github.com/homebridge/plugins/wiki/Verified-Plugins) guidelines (dynamic platform, Plugin Settings GUI, no analytics, and related requirements).
 
 ## Requirements
 
