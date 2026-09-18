@@ -36,9 +36,7 @@ export class NimbioPlatform {
             this.log.error(String(error));
             return;
         }
-        this.log.debug('Finished initializing platform:', this.resolved.name);
         this.api.on('didFinishLaunching', () => {
-            this.log.debug('Executed didFinishLaunching callback');
             void this.discoverDevices();
         });
         this.api.on('shutdown', () => {

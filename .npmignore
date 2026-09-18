@@ -3,6 +3,7 @@ tsconfig.json
 eslint.config.js
 nodemon.json
 *.tsbuildinfo
+**/*.map
 .git/
 .github/
 .vscode/
@@ -10,3 +11,6 @@ nodemon.json
 *.tgz
 .env
 .env.*
+.npmrc
+config.json
+*.log

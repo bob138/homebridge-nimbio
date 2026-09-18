@@ -3,8 +3,8 @@
   "pluginType": "platform",
   "singular": true,
   "strictValidation": false,
-  "headerDisplay": "Control your Nimbio cellular gate from Apple HomeKit. Paste a live API key from the Nimbio portal below — Homebridge stores it securely in your config.",
-  "footerDisplay": "After saving, restart Homebridge. Your gate will appear in the Apple Home app.",
+  "headerDisplay": "Control a Nimbio cellular gate from Apple HomeKit. Paste a live API key from the Nimbio portal — Homebridge stores it in the local config.",
+  "footerDisplay": "After saving, restart Homebridge. Discovered gates appear in the Apple Home app.",
   "schema": {
     "type": "object",
     "required": ["name", "apiKey"],
@@ -19,7 +19,7 @@
       "apiKey": {
         "title": "Nimbio API Key",
         "type": "string",
-        "description": "Live API key from the Nimbio portal (starts with nimbio_live_). This is the only secret you need.",
+        "description": "Live API key from the Nimbio portal (starts with nimbio_live_). Required; treat it like a physical remote.",
         "placeholder": "nimbio_live_…",
         "options": {
           "hidden": true

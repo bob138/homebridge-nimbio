@@ -50,10 +50,7 @@ export class NimbioPlatform implements DynamicPlatformPlugin {
       return;
     }
 
-    this.log.debug('Finished initializing platform:', this.resolved.name);
-
     this.api.on('didFinishLaunching', () => {
-      this.log.debug('Executed didFinishLaunching callback');
       void this.discoverDevices();
     });
 

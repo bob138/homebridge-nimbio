@@ -4,7 +4,7 @@
   "type": "module",
   "version": "1.0.0",
   "description": "Homebridge plugin for Nimbio cellular smart gate openers",
-  "author": "bob138",
+  "author": "homebridge-nimbio contributors",
   "license": "Apache-2.0",
   "homepage": "https://github.com/bob138/homebridge-nimbio#readme",
   "repository": {

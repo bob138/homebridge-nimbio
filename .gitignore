@@ -2,8 +2,12 @@ node_modules/
 *.tsbuildinfo
 .DS_Store
 npm-debug.log*
+yarn-error.log*
 .idea/
 .vscode/
 *.tgz
 .env
 .env.*
+.npmrc
+config.json
+*.log
